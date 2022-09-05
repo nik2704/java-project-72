@@ -1,13 +1,13 @@
 plugins {
     id 'java'
-//    id 'application'
+    id 'application'
     id 'checkstyle'
     id 'jacoco'
 }
 
-//application {
-//    mainClass = 'hexlet.code.App'
-//}
+application {
+    mainClass = 'hexlet.code.App'
+}
 
 group 'hexlet.code'
 version '1.0-SNAPSHOT'
@@ -17,6 +17,12 @@ repositories {
 }
 
 dependencies {
+    implementation 'io.javalin:javalin:4.0.1'
+    implementation 'org.slf4j:slf4j-simple:1.7.31'
+    implementation 'org.thymeleaf:thymeleaf:3.0.12.RELEASE'
+    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.0.0'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-java8time:3.0.4.RELEASE'
+
     compileOnly 'org.projectlombok:lombok:1.18.20'
     annotationProcessor 'org.projectlombok:lombok:1.18.20'
     testCompileOnly 'org.projectlombok:lombok:1.18.20'
