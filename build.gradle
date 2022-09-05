@@ -52,3 +52,10 @@ test {
 compileJava {
     options.release = 17
 }
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+task stage(dependsOn: ['clean', 'installDist'])
+installDist.mustRunAfter clean
