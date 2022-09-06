@@ -1,0 +1,13 @@
+datasource:
+  default: ${APP_ENV}
+  development:
+    username: ""
+    password: ""
+    url: "jdbc:h2:./urldb"
+  production:
+    url: ${DATABASE_URL}
+
+ebean:
+  db:
+    ddl:
+      run: true

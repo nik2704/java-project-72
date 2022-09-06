@@ -1,6 +1,7 @@
 package hexlet.code;
 
 import hexlet.code.controllers.RootController;
+import hexlet.code.utils.Env;
 import io.javalin.Javalin;
 import io.javalin.plugin.rendering.template.JavalinThymeleaf;
 import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
@@ -11,10 +12,6 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 public class App {
 
-    private static int getPort() {
-        String port = System.getenv().getOrDefault("PORT", "5000");
-        return Integer.valueOf(port);
-    }
     private static TemplateEngine getTemplateEngine() {
         TemplateEngine templateEngine = new TemplateEngine();
         templateEngine.addDialect(new LayoutDialect());
@@ -33,7 +30,9 @@ public class App {
     public static Javalin getApp() {
 
         Javalin app = Javalin.create(config -> {
-            config.enableDevLogging();
+            if (!Env.isProduction()) {
+                config.enableDevLogging();
+            }
             JavalinThymeleaf.configure(getTemplateEngine());
         });
 
@@ -48,6 +47,6 @@ public class App {
 
     public static void main(String[] args) {
         Javalin app = getApp();
-        app.start(getPort());
+        app.start(Env.getPort());
     }
 }

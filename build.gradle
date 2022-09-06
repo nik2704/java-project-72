@@ -3,6 +3,7 @@ plugins {
     id 'application'
     id 'checkstyle'
     id 'jacoco'
+    id 'io.ebean' version '12.11.5'
 }
 
 application {
@@ -17,21 +18,31 @@ repositories {
 }
 
 dependencies {
-    implementation 'io.javalin:javalin:4.0.1'
-    implementation 'org.slf4j:slf4j-simple:1.7.31'
-    implementation 'org.thymeleaf:thymeleaf:3.0.12.RELEASE'
-    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.0.0'
+    implementation 'io.javalin:javalin:4.6.4'
+    implementation 'org.slf4j:slf4j-simple:2.0.0'
+    implementation 'org.thymeleaf:thymeleaf:3.0.15.RELEASE'
+    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.1.0'
     implementation 'org.thymeleaf.extras:thymeleaf-extras-java8time:3.0.4.RELEASE'
 
-    compileOnly 'org.projectlombok:lombok:1.18.20'
-    annotationProcessor 'org.projectlombok:lombok:1.18.20'
-    testCompileOnly 'org.projectlombok:lombok:1.18.20'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
-//    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.0-M1'
-//    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.8.0-M1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testImplementation 'org.assertj:assertj-core:3.19.0'
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    testCompileOnly 'org.projectlombok:lombok:1.18.24'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
+
+    implementation 'io.ebean:ebean:12.11.5'
+    implementation 'io.ebean:ebean-ddl-generator:12.11.5'
+    implementation 'io.ebean:ebean-querybean:12.11.5'
+    implementation 'io.ebean:ebean-migration:12.11.2'
+    implementation 'io.ebean:ebean-annotation:7.3'
+    annotationProcessor 'io.ebean:querybean-generator:12.11.5'
+
+    implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.5'
+    implementation 'javax.activation:activation:1.1.1'
+
+
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
+    testImplementation 'org.assertj:assertj-core:3.23.1'
 }
 
 jacocoTestReport {
@@ -51,6 +62,11 @@ test {
 
 compileJava {
     options.release = 17
+}
+
+task generateMigrations(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'hexlet.code.MigrationGenerator'
 }
 
 tasks.withType(JavaCompile) {
