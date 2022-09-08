@@ -1,6 +1,7 @@
 package hexlet.code.utils;
 
 public class Env {
+    public static final int ITEMS_PER_PAGE = 10;
     public static int getPort() {
         String port = System.getenv().getOrDefault("PORT", "5000");
         return Integer.valueOf(port);

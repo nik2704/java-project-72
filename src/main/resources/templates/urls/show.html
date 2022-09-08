@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+layout:decorate="~{layouts/application.html}">
+
+<head>
+  <title>Show URL</title>
+</head>
+<section layout:fragment="content">
+  <div class="container-lg mt-5">
+    <h1>Данные URL</h1>
+    <div class="card" th:object="${url}">
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item" th:text="*{id}"></li>
+        <li class="list-group-item" th:text="*{name}"></li>
+        <li class="list-group-item" th:text="*{createdAt}"></li>
+      </ul>
+    </div>
+
+    <nav aria-label="Control buttons">
+        <div class="card-footer justify-content-center mt-5" th:object="${url}">
+          <a class="btn btn-primary" th:href="@{/urls/{id}/edit(id=*{id})}">Редактировать</a>
+          <a class="btn btn-primary" th:href="@{/urls/{id}/delete(id=*{id})}">Удалить</a>
+        </div>
+    </nav>
+
+  </div>
+
+</section>
