@@ -5,6 +5,8 @@ datasource:
     password: ""
     url: "jdbc:h2:./urldb"
   production:
+    username: "vzakpvgltdsiwf"
+    password: "9ea71677c22d10357c7f0717cd51095868694278010758ee7300dff59fa63c0b"
     url: ${DATABASE_URL}
 
 ebean:
