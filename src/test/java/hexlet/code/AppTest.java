@@ -6,6 +6,7 @@ import io.ebean.DB;
 import io.ebean.Database;
 import io.ebean.Transaction;
 import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import io.javalin.Javalin;
 import org.junit.jupiter.api.BeforeAll;
@@ -23,6 +24,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import javax.servlet.http.HttpServletResponse;
 
+import static hexlet.code.utils.Env.UNPROC_ENTITY;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public final class AppTest {
@@ -178,12 +180,13 @@ public final class AppTest {
                 "https://wwwtestdomainru"
             }, ignoreLeadingAndTrailingWhitespace = true)
         void testWrongPagesCreation(String inputName) {
-            HttpResponse<String> responsePost = Unirest
+            HttpResponse<JsonNode> jsonResponse = Unirest
                     .post(baseUrl + "/urls")
                     .field("url", inputName)
-                    .asEmpty();
+                    .asJson();
 
-            assertThat(responsePost.getStatus()).isEqualTo(UNPROC_ENTITY);
+            assertThat(jsonResponse.getBody()).isNotNull();
+            assertThat(jsonResponse.getBody()).toString().contains("Некорректный URL");
         }
     }
 }

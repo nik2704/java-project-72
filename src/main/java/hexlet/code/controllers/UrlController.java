@@ -41,7 +41,7 @@ public final class UrlController {
             }
         } else {
             ctx.status(UNPROC_ENTITY);
-            render(ctx, "index.html", "Некорректный URL", "danger");
+            redirect(ctx, "/", "Некорректный URL", "danger");
         }
     };
 
