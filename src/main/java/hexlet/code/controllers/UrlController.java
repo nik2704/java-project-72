@@ -16,6 +16,10 @@ import java.util.stream.IntStream;
 
 import org.apache.commons.validator.routines.UrlValidator;
 
+import javax.servlet.http.HttpServletResponse;
+
+import static hexlet.code.utils.Env.UNPROC_ENTITY;
+
 
 public final class UrlController {
     @Getter
@@ -36,7 +40,8 @@ public final class UrlController {
                 redirect(ctx, "/urls", "Страница успешно добавлена", "success");
             }
         } else {
-            redirect(ctx, "/", "Некорректный URL", "danger");
+            ctx.status(UNPROC_ENTITY);
+            render(ctx, "index.html", "Некорректный URL", "danger");
         }
     };
 
@@ -80,7 +85,8 @@ public final class UrlController {
             ctx.attribute("url", url);
             render(ctx, "urls/show.html", null, null);
         } else {
-            redirect(ctx, "/", "Некорректный ID (" + id + ")", "danger");
+            ctx.status(HttpServletResponse.SC_NOT_FOUND);
+            render(ctx, "index.html", "Некорректный ID (" + id + ")", "danger");
         }
     };
 
