@@ -129,7 +129,7 @@ public final class AppTest {
 
             assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
             assertThat(body).contains("http://www.ya.ru");
-            assertThat(body).contains("Данные URL");
+            assertThat(body).contains("Сайт http://www.ya.ru");
         }
 
         @Test
