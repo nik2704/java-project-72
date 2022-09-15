@@ -22,6 +22,14 @@ import static hexlet.code.utils.Env.UNPROC_ENTITY;
 
 
 public final class UrlController {
+
+    @Getter
+    private static Handler checkUrl = ctx -> {
+        int id = ctx.pathParamAsClass("id", Integer.class).getOrDefault(null);
+//        ctx.attribute("article", article);
+        redirect(ctx, "/urls/" + id, "Страница успешно проверена", "success");
+    };
+
     @Getter
     private static Handler newUrl = ctx -> {
         String newUrlRequested = Parser.getUrlFormatted(ctx.formParam("url"));

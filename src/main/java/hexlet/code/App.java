@@ -39,6 +39,9 @@ public class App {
                 get(UrlController.getListUrls());
                 path("{id}", () -> {
                     get(UrlController.getShowUrl());
+                    path("checks", () -> {
+                        post(UrlController.getCheckUrl());
+                    });
                 });
             });
         });
