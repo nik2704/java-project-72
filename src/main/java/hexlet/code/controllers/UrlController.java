@@ -83,16 +83,13 @@ public final class UrlController {
             ctx.status(HttpServletResponse.SC_NOT_FOUND);
             render(ctx, "index.html", "Некорректный ID (" + id + ")", "danger");
         }
-
-//        ctx.attribute("article", article);
-
     };
 
     @Getter
     private static Handler newUrl = ctx -> {
         String newUrlRequested = Parser.getUrlFormatted(ctx.formParam("url"));
 
-        UrlValidator urlValidator = new UrlValidator();
+        UrlValidator urlValidator = new UrlValidator(UrlValidator.ALLOW_LOCAL_URLS);
         if (urlValidator.isValid(newUrlRequested)) {
             Optional<Url> url = new QUrl()
                         .name.equalTo(newUrlRequested)
@@ -149,9 +146,10 @@ public final class UrlController {
 
         if (url != null) {
             List<UrlCheck> urlChecks = new QUrlCheck()
-                    .url.equalTo(url)
+                    .url.id.equalTo(id)
                     .orderBy()
-                        .id.desc()
+                        .id
+                        .desc()
                     .findList();
 
             ctx.attribute("url", url);

@@ -1,14 +1,19 @@
 package hexlet.code;
 
 import hexlet.code.domain.Url;
+import hexlet.code.domain.UrlCheck;
 import hexlet.code.domain.query.QUrl;
+import hexlet.code.domain.query.QUrlCheck;
 import io.ebean.DB;
-import io.ebean.Database;
 import io.ebean.Transaction;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import io.javalin.Javalin;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,20 +21,20 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Nested;
 
-
-
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 
 import javax.servlet.http.HttpServletResponse;
 
-import static hexlet.code.utils.Env.UNPROC_ENTITY;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+import static hexlet.code.utils.Parser.getUrlFormatted;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public final class AppTest {
-    private static final int UNPROC_ENTITY = 422;
-
     @Test
     void testInit() {
         assertThat(true).isEqualTo(true);
@@ -37,17 +42,21 @@ public final class AppTest {
 
     private static Javalin app;
     private static String baseUrl;
-    private static Url existingUrl;
-    private static Database database;
     private static Transaction transaction;
+    private static MockWebServer mockWebServer;
 
     @BeforeAll
-    public static void beforeAll() {
+    public static void beforeAll() throws IOException {
         app = App.getApp();
         app.start(0);
         int port = app.port();
         baseUrl = "http://localhost:" + port;
-        database = DB.getDefault();
+
+        mockWebServer = new MockWebServer();
+        String expected = Files.readString(Paths.get("src", "test", "resources", "testSiteDoc.html"));
+        mockWebServer.enqueue(new MockResponse().setBody(expected));
+        mockWebServer.enqueue(new MockResponse().setBody(expected));
+        mockWebServer.start();
     }
 
     @BeforeEach
@@ -61,8 +70,9 @@ public final class AppTest {
     }
 
     @AfterAll
-    public static void afterAll() {
+    public static void afterAll() throws IOException {
         app.stop();
+        mockWebServer.shutdown();
     }
 
     @Nested
@@ -121,18 +131,6 @@ public final class AppTest {
         }
 
         @Test
-        void testShow() {
-            HttpResponse<String> response = Unirest
-                    .get(baseUrl + "/urls/1")
-                    .asString();
-            String body = response.getBody();
-
-            assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
-            assertThat(body).contains("http://www.ya.ru");
-            assertThat(body).contains("Сайт http://www.ya.ru");
-        }
-
-        @Test
         void testIncorrectUrlRequest() {
             HttpResponse<String> response = Unirest
                     .get(baseUrl + "/urls/123456")
@@ -187,6 +185,71 @@ public final class AppTest {
 
             assertThat(jsonResponse.getBody()).isNotNull();
             assertThat(jsonResponse.getBody()).toString().contains("Некорректный URL");
+        }
+
+        @Test
+        void testCheckUrl() {
+            String description = "Description of the site.";
+            String title = "Test document";
+            String h1 = "Hello, World!";
+
+            String url = mockWebServer.url("/").toString();
+
+            HttpResponse<String> response = Unirest.get(url).asString();
+
+            assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
+
+            Document body = Jsoup.parse(response.getBody());
+
+            String currentTitle = body.title();
+            String currentDescription = null;
+            String currentrH1 = null;
+
+            if (body.selectFirst("meta[name=description]") != null) {
+                currentDescription = body.selectFirst("meta[name=description]").attr("content");
+            }
+
+
+            if (body.selectFirst("h1") != null) {
+                currentrH1 = body.selectFirst("h1").text();
+            }
+
+            assertThat(description).isEqualTo(currentDescription);
+            assertThat(title).isEqualTo(currentTitle);
+            assertThat(h1).isEqualTo(currentrH1);
+
+            String urlTest = getUrlFormatted(url);
+
+            HttpResponse<String> responsePost = Unirest
+                    .post(baseUrl + "/urls")
+                    .field("url", urlTest)
+                    .asEmpty();
+
+            assertThat(responsePost.getStatus()).isEqualTo(HttpServletResponse.SC_FOUND);
+
+            Url dbUrl = new QUrl()
+                    .name.equalTo(urlTest)
+                    .findOne();
+
+            assertThat(dbUrl).isNotNull();
+
+            responsePost = Unirest
+                    .post(baseUrl + "/urls/" + dbUrl.getId() + "/checks")
+                    .asEmpty();
+
+            assertThat(responsePost.getStatus()).isEqualTo(HttpServletResponse.SC_FOUND);
+
+
+            UrlCheck dbUrlCheck = new QUrlCheck()
+                    .url.equalTo(dbUrl)
+                    .orderBy()
+                        .id
+                        .desc()
+                    .findOne();
+
+            assertThat(description).isEqualTo(dbUrlCheck.getDescription());
+            assertThat(title).isEqualTo(dbUrlCheck.getTitle());
+            assertThat(h1).isEqualTo(dbUrlCheck.getH1());
         }
     }
 }

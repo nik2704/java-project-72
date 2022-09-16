@@ -20,7 +20,7 @@ layout:decorate="~{layouts/application.html}">
       </tr>
       <tr>
         <td>Дата создания</td>
-        <td th:text="${#dates.format(url.getCreatedAt(), 'dd/MM/yyyy HH:mm')}"></td>
+        <td th:text="${#temporals.format(url.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
       </tr>
       </tbody>
     </table>
@@ -37,17 +37,15 @@ layout:decorate="~{layouts/application.html}">
         <th>description</th>
         <th class="col-2">Дата проверки</th>
       </tr></thead>
-      <tbody>
-
-      <tr th:each="urlCheck : ${urlChecks}" th:object="${urlCheck}">
-        <td th:text="*{getId()}"></td>
-        <td th:text="*{getStatusCode()}"></td>
-        <td th:text="*{getTitle()}"></td>
-        <td th:text="*{getH1()}"></td>
-        <td th:text="*{getDescription()}"></td>
-        <td th:text="${#dates.format(url.getCreatedAt(), 'dd/MM/yyyy HH:mm')}"></td>
+      <tbody th:each="urlCheck : ${urlChecks}">
+      <tr>
+        <td th:text="${urlCheck.id}"></td>
+        <td th:text="${urlCheck.statusCode}"></td>
+        <td th:text="${urlCheck.title}"></td>
+        <td th:text="${urlCheck.h1}"></td>
+        <td th:text="${urlCheck.description}"></td>
+        <td th:text="${#temporals.format(urlCheck.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
       </tr>
-
       </tbody>
     </table>
   </div>

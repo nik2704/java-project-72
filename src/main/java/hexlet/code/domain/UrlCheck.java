@@ -11,7 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Lob;
 import javax.persistence.Basic;
 import javax.persistence.ManyToOne;
-import java.sql.Timestamp;
+import java.time.Instant;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -25,7 +25,7 @@ public class UrlCheck extends Model {
 
     @Getter
     @WhenCreated
-    private Timestamp createdAt;
+    private Instant createdAt;
 
     @Getter
     private int statusCode;
