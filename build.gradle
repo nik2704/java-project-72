@@ -36,7 +36,6 @@ dependencies {
     // https://mvnrepository.com/artifact/org.postgresql/postgresql
     implementation 'org.postgresql:postgresql:42.5.0'
 
-
     implementation 'io.ebean:ebean:12.15.1'
     implementation 'io.ebean:ebean-ddl-generator:12.15.1'
     implementation 'io.ebean:ebean-querybean:12.15.1'
@@ -46,6 +45,8 @@ dependencies {
 
     implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.5'
     implementation 'javax.activation:activation:1.1.1'
+    implementation 'com.konghq:unirest-java:3.13.6'
+    implementation 'org.jsoup:jsoup:1.15.3'
 
 
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'

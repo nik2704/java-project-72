@@ -5,10 +5,10 @@ layout:decorate="~{layouts/application.html}">
 <head>
   <title>Анализатор страниц</title>
 </head>
-<section layout:fragment="content" th:object="${url}">
+<section layout:fragment="content">
   <div class="container-lg mt-5">
-    <h1 th:text="'Сайт ' + *{getName()}"></h1>
-    <table class="table table-bordered table-hover mt-3">
+    <h1 th:text="'Сайт ' + *{url.getName()}"></h1>
+    <table class="table table-bordered table-hover mt-3" th:object="${url}">
       <tbody>
       <tr>
         <td>ID</td>
@@ -20,13 +20,12 @@ layout:decorate="~{layouts/application.html}">
       </tr>
       <tr>
         <td>Дата создания</td>
-<!--        <td th:text="${url.getCreatedAt()}"></td>-->
         <td th:text="${#dates.format(url.getCreatedAt(), 'dd/MM/yyyy HH:mm')}"></td>
       </tr>
       </tbody>
     </table>
     <h2 class="mt-5">Проверки</h2>
-    <form method="post" action="/urls/1/checks">
+    <form method="post" th:action="@{/urls/{id}/checks(id=*{url.getId()})}">
       <button type="submit" class="btn btn-primary">Запустить проверку</button>
     </form>
     <table class="table table-bordered table-hover mt-3">
@@ -39,6 +38,16 @@ layout:decorate="~{layouts/application.html}">
         <th class="col-2">Дата проверки</th>
       </tr></thead>
       <tbody>
+
+      <tr th:each="urlCheck : ${urlChecks}" th:object="${urlCheck}">
+        <td th:text="*{getId()}"></td>
+        <td th:text="*{getStatusCode()}"></td>
+        <td th:text="*{getTitle()}"></td>
+        <td th:text="*{getH1()}"></td>
+        <td th:text="*{getDescription()}"></td>
+        <td th:text="${#dates.format(url.getCreatedAt(), 'dd/MM/yyyy HH:mm')}"></td>
+      </tr>
+
       </tbody>
     </table>
   </div>

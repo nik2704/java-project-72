@@ -5,9 +5,12 @@ import io.ebean.annotation.WhenCreated;
 import lombok.Getter;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.GeneratedValue;
+import javax.persistence.OneToMany;
+import javax.persistence.CascadeType;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 public class Url extends Model {
@@ -22,6 +25,10 @@ public class Url extends Model {
     @Getter
     @WhenCreated
     private Timestamp createdAt;
+
+    @Getter
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<UrlCheck> urlChecks;
 
     public Url(String siteName) {
         this.name = siteName;
