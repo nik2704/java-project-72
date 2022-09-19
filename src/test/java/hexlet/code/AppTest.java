@@ -7,7 +7,6 @@ import hexlet.code.domain.query.QUrlCheck;
 import io.ebean.DB;
 import io.ebean.Transaction;
 import kong.unirest.HttpResponse;
-import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import io.javalin.Javalin;
 import okhttp3.mockwebserver.MockResponse;
@@ -21,8 +20,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Nested;
 
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 
 
 import javax.servlet.http.HttpServletResponse;
@@ -93,9 +90,9 @@ public final class AppTest {
         }
     }
 
-//    @Nested
-//    class UrlTest {
-//
+    @Nested
+    class UrlTest {
+
 //        @ParameterizedTest
 //        @CsvSource(value = {
 //                "http://www.ya.ru",
