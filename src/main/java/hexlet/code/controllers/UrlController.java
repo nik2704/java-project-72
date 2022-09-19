@@ -89,7 +89,7 @@ public final class UrlController {
     private static Handler newUrl = ctx -> {
         String newUrlRequested = Parser.getUrlFormatted(ctx.formParam("url"));
 
-        UrlValidator urlValidator = new UrlValidator(UrlValidator.ALLOW_LOCAL_URLS);
+        UrlValidator urlValidator = new UrlValidator(UrlValidator.ALLOW_LOCAL_URLS + UrlValidator.ALLOW_ALL_SCHEMES);
         if (urlValidator.isValid(newUrlRequested)) {
             Optional<Url> url = new QUrl()
                         .name.equalTo(newUrlRequested)
