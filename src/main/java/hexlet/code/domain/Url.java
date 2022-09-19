@@ -34,9 +34,9 @@ public class Url extends Model {
         this.name = siteName;
     }
 
-    public final long getMaxId() {
+    public final long getMaxCode() {
         if (getUrlChecks().size() > 0) {
-            return getUrlChecks().get(getUrlChecks().size() - 1).getId();
+            return getUrlChecks().get(getUrlChecks().size() - 1).getStatusCode();
         }
 
         return -1;
