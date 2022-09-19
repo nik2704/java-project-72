@@ -72,23 +72,23 @@ public final class AppTest {
         mockWebServer.shutdown();
     }
 
-    @Nested
-    class RootTest {
-
-        @Test
-        void testIndex() {
-            HttpResponse<String> response = Unirest.get(baseUrl).asString();
-            assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
-            assertThat(response.getBody()).contains("Анализатор страниц");
-        }
-
-        @Test
-        void testAbout() {
-            HttpResponse<String> response = Unirest.get(baseUrl + "/urls").asString();
-            assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
-            assertThat(response.getBody()).contains("Сайты");
-        }
-    }
+//    @Nested
+//    class RootTest {
+//
+//        @Test
+//        void testIndex() {
+//            HttpResponse<String> response = Unirest.get(baseUrl).asString();
+//            assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
+//            assertThat(response.getBody()).contains("Анализатор страниц");
+//        }
+//
+//        @Test
+//        void testAbout() {
+//            HttpResponse<String> response = Unirest.get(baseUrl + "/urls").asString();
+//            assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
+//            assertThat(response.getBody()).contains("Сайты");
+//        }
+//    }
 
     @Nested
     class UrlTest {
