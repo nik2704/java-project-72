@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Nested;
+//import org.junit.jupiter.api.Nested;
 
 
 
@@ -90,8 +90,8 @@ public final class AppTest {
 //        }
 //    }
 
-    @Nested
-    class UrlTest {
+//    @Nested
+//    class UrlTest {
 
 //        @ParameterizedTest
 //        @CsvSource(value = {
@@ -184,69 +184,69 @@ public final class AppTest {
 //            assertThat(jsonResponse.getBody()).toString().contains("Некорректный URL");
 //        }
 
-        @Test
-        void testCheckUrl() {
-            String description = "Description of the site.";
-            String title = "Test document";
-            String h1 = "Hello, World!";
+    @Test
+    void testCheckUrl() {
+        String description = "Description of the site.";
+        String title = "Test document";
+        String h1 = "Hello, World!";
 
-            String url = mockWebServer.url("/").toString();
+        String url = mockWebServer.url("/").toString();
 
-            HttpResponse<String> response = Unirest.get(url).asString();
+        HttpResponse<String> response = Unirest.get(url).asString();
 
-            assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
+        assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
 
-            Document body = Jsoup.parse(response.getBody());
+        Document body = Jsoup.parse(response.getBody());
 
-            String currentTitle = body.title();
-            String currentDescription = null;
-            String currentrH1 = null;
+        String currentTitle = body.title();
+        String currentDescription = null;
+        String currentrH1 = null;
 
-            if (body.selectFirst("meta[name=description]") != null) {
-                currentDescription = body.selectFirst("meta[name=description]").attr("content");
-            }
-
-
-            if (body.selectFirst("h1") != null) {
-                currentrH1 = body.selectFirst("h1").text();
-            }
-
-            assertThat(description).isEqualTo(currentDescription);
-            assertThat(title).isEqualTo(currentTitle);
-            assertThat(h1).isEqualTo(currentrH1);
-
-            String urlTest = getUrlFormatted(url);
-
-            HttpResponse<String> responsePost = Unirest
-                    .post(baseUrl + "/urls")
-                    .field("url", urlTest)
-                    .asEmpty();
-
-            assertThat(responsePost.getStatus()).isEqualTo(HttpServletResponse.SC_FOUND);
-
-            Url dbUrl = new QUrl()
-                    .name.equalTo(urlTest)
-                    .findOne();
-
-            assertThat(dbUrl).isNotNull();
-
-            responsePost = Unirest
-                    .post(baseUrl + "/urls/" + dbUrl.getId() + "/checks")
-                    .asEmpty();
-
-            assertThat(responsePost.getStatus()).isEqualTo(HttpServletResponse.SC_FOUND);
-
-
-            UrlCheck dbUrlCheck = new QUrlCheck()
-                    .url.equalTo(dbUrl)
-                    .orderBy()
-                        .id
-                        .desc()
-                    .findOne();
-
-            assertThat(description).isEqualTo(dbUrlCheck.getDescription());
-            assertThat(title).isEqualTo(dbUrlCheck.getTitle());
-            assertThat(h1).isEqualTo(dbUrlCheck.getH1());
+        if (body.selectFirst("meta[name=description]") != null) {
+            currentDescription = body.selectFirst("meta[name=description]").attr("content");
         }
+
+
+        if (body.selectFirst("h1") != null) {
+            currentrH1 = body.selectFirst("h1").text();
+        }
+
+        assertThat(description).isEqualTo(currentDescription);
+        assertThat(title).isEqualTo(currentTitle);
+        assertThat(h1).isEqualTo(currentrH1);
+
+        String urlTest = getUrlFormatted(url);
+
+        HttpResponse<String> responsePost = Unirest
+                .post(baseUrl + "/urls")
+                .field("url", urlTest)
+                .asEmpty();
+
+        assertThat(responsePost.getStatus()).isEqualTo(HttpServletResponse.SC_FOUND);
+
+        Url dbUrl = new QUrl()
+                .name.equalTo(urlTest)
+                .findOne();
+
+        assertThat(dbUrl).isNotNull();
+
+        responsePost = Unirest
+                .post(baseUrl + "/urls/" + dbUrl.getId() + "/checks")
+                .asEmpty();
+
+        assertThat(responsePost.getStatus()).isEqualTo(HttpServletResponse.SC_FOUND);
+
+
+        UrlCheck dbUrlCheck = new QUrlCheck()
+                .url.equalTo(dbUrl)
+                .orderBy()
+                    .id
+                    .desc()
+                .findOne();
+
+        assertThat(description).isEqualTo(dbUrlCheck.getDescription());
+        assertThat(title).isEqualTo(dbUrlCheck.getTitle());
+        assertThat(h1).isEqualTo(dbUrlCheck.getH1());
     }
+//    }
 }
