@@ -98,11 +98,11 @@ public final class AppTest {
 
         @ParameterizedTest
         @CsvSource(value = {
-                "http://www.ya.ru",
-                "https://www.ya.ru",
-                "http://www.test.ru:8080",
-                "https://www.test.ru:80",
-                "https://www.test.domain.ru"
+            "http://www.ya.ru",
+            "https://www.ya.ru",
+            "http://www.test.ru:8080",
+            "https://www.test.ru:80",
+            "https://www.test.domain.ru"
             }, ignoreLeadingAndTrailingWhitespace = true)
         void testCorrectPagesCreation(String inputName) {
             HttpResponse<String> responsePost = Unirest
@@ -171,11 +171,11 @@ public final class AppTest {
 
         @ParameterizedTest
         @CsvSource(value = {
-                "www.ya.ru",
-                "httpsAA://www.ya.ru",
-                "http://www.test.ru:8080ABC",
-                "https://www.test.ru:-10",
-                "https://wwwtestdomainru"
+            "www.ya.ru",
+            "httpsAA://www.ya.ru",
+            "http://www.test.ru:8080ABC",
+            "https://www.test.ru:-10",
+            "https://wwwtestdomainru"
             }, ignoreLeadingAndTrailingWhitespace = true)
         void testWrongPagesCreation(String inputName) {
             HttpResponse<JsonNode> jsonResponse = Unirest
