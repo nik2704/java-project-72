@@ -1,4 +1,4 @@
-package hexlet.code;
+package hexlet.code.utils;
 
 import java.io.FileInputStream;
 import java.io.IOException;

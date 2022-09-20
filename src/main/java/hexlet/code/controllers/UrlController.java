@@ -1,6 +1,6 @@
 package hexlet.code.controllers;
 
-import hexlet.code.LoggerFactory;
+import hexlet.code.utils.LoggerFactory;
 import hexlet.code.domain.Url;
 import hexlet.code.domain.UrlCheck;
 import hexlet.code.domain.query.QUrl;
@@ -22,12 +22,12 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.commons.validator.routines.UrlValidator;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import javax.servlet.http.HttpServletResponse;
 
 import static hexlet.code.utils.Env.UNPROC_ENTITY;
+import static hexlet.code.utils.Parser.getBody;
 
 
 public final class UrlController {
@@ -51,7 +51,7 @@ public final class UrlController {
                 HttpResponse<String> response = Unirest.get(url.getName()).asString();
 
                 int statusCode = response.getStatus();
-                Document body = Jsoup.parse(response.getBody());
+                Document body = getBody(response.getBody());
                 String title = body.title();
                 String description = null;
                 String h1 = null;

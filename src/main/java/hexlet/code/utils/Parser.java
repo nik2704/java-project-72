@@ -1,7 +1,8 @@
 package hexlet.code.utils;
 
 
-import hexlet.code.LoggerFactory;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import java.net.URL;
 import java.util.logging.Level;
@@ -36,5 +37,9 @@ public class Parser {
         }
 
         return null;
+    }
+
+    public static Document getBody(String body) {
+        return Jsoup.parse(body);
     }
 }

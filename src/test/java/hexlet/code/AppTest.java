@@ -35,11 +35,6 @@ import static hexlet.code.utils.Parser.getUrlFormatted;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public final class AppTest {
-    @Test
-    void testInit() {
-        assertThat(true).isEqualTo(true);
-    }
-
     private static Javalin app;
     private static String baseUrl;
     private static Transaction transaction;
