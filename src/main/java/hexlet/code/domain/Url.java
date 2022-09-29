@@ -33,21 +33,4 @@ public class Url extends Model {
     public Url(String siteName) {
         this.name = siteName;
     }
-
-    public final long getMaxCode() {
-        if (getUrlChecks().size() > 0) {
-            return getUrlChecks().get(getUrlChecks().size() - 1).getStatusCode();
-        }
-
-        return -1;
-    }
-
-    public final Instant getMaxCheckDate() {
-        if (getUrlChecks().size() > 0) {
-            return getUrlChecks().get(getUrlChecks().size() - 1).getCreatedAt();
-        }
-
-        return null;
-    }
-
 }

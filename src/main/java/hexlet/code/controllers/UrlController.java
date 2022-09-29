@@ -8,14 +8,13 @@ import hexlet.code.domain.query.QUrlCheck;
 import hexlet.code.utils.Env;
 import hexlet.code.utils.Parser;
 import io.ebean.PagedList;
-import io.javalin.http.Context;
 import io.javalin.http.Handler;
+import io.javalin.http.NotFoundResponse;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import lombok.Getter;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -24,7 +23,6 @@ import java.util.stream.IntStream;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.jsoup.nodes.Document;
 
-import javax.servlet.http.HttpServletResponse;
 
 import static hexlet.code.utils.Env.UNPROC_ENTITY;
 import static hexlet.code.utils.Parser.getBody;
@@ -42,47 +40,45 @@ public final class UrlController {
                 .id.equalTo(id)
                 .findOne();
 
-        if (url != null) {
-            String msg = "Страница успешно проверена";
-            String alertMsg = "success";
+        if (url == null) {
+            throw new NotFoundResponse();
+        }
 
-            try {
+        try {
+            HttpResponse<String> response = Unirest.get(url.getName()).asString();
 
-                HttpResponse<String> response = Unirest.get(url.getName()).asString();
+            int statusCode = response.getStatus();
+            Document body = getBody(response.getBody());
+            String title = body.title();
+            String description = null;
+            String h1 = null;
 
-                int statusCode = response.getStatus();
-                Document body = getBody(response.getBody());
-                String title = body.title();
-                String description = null;
-                String h1 = null;
-
-                if (body.selectFirst("meta[name=description]") != null) {
-                    description = body.selectFirst("meta[name=description]").attr("content");
-                }
-
-
-                if (body.selectFirst("h1") != null) {
-                    h1 = body.selectFirst("h1").text();
-                }
-
-                UrlCheck urlCheck = new UrlCheck(statusCode, title, h1, description, url);
-                urlCheck.save();
-
-            } catch (Exception e) {
-                alertMsg = "danger";
-                msg = "Ошибка проверки сайта (" + url.getName() + ")";
-                LOGGER.log(
-                        Level.WARNING,
-                        "Attempt to check the URL: " + url.getName() + " was failed: " + e.getMessage()
-                );
+            if (body.selectFirst("meta[name=description]") != null) {
+                description = body.selectFirst("meta[name=description]").attr("content");
             }
 
-            redirect(ctx, "/urls/" + id, msg, alertMsg);
 
-        } else {
-            ctx.status(HttpServletResponse.SC_NOT_FOUND);
-            render(ctx, "index.html", "Некорректный ID (" + id + ")", "danger");
+            if (body.selectFirst("h1") != null) {
+                h1 = body.selectFirst("h1").text();
+            }
+
+            UrlCheck urlCheck = new UrlCheck(statusCode, title, h1, description, url);
+            urlCheck.save();
+
+            ctx.sessionAttribute("flash", "Страница успешно проверена");
+            ctx.sessionAttribute("flash-type", "success");
+
+        } catch (Exception e) {
+            ctx.sessionAttribute("flash", "Ошибка проверки сайта (" + url.getName() + ")");
+            ctx.sessionAttribute("flash-type", "danger");
+
+            LOGGER.log(
+                    Level.WARNING,
+                    "Attempt to check the URL: " + url.getName() + " was failed: " + e.getMessage()
+            );
         }
+
+        ctx.redirect("/urls/" + id);
     };
 
     @Getter
@@ -91,20 +87,27 @@ public final class UrlController {
 
         UrlValidator urlValidator = new UrlValidator(UrlValidator.ALLOW_LOCAL_URLS + UrlValidator.ALLOW_ALL_SCHEMES);
         if (urlValidator.isValid(newUrlRequested)) {
-            Optional<Url> url = new QUrl()
-                        .name.equalTo(newUrlRequested)
-                        .findOneOrEmpty();
-            if (url.isPresent()) {
-                redirect(ctx, "/urls", "Страница уже существует", "info");
+            Url url = new QUrl()
+                    .name.equalTo(newUrlRequested)
+                    .findOne();
+
+            if (url != null) {
+                ctx.sessionAttribute("flash", "Страница уже существует");
+                ctx.sessionAttribute("flash-type", "info");
             } else {
                 Url newUrlCreation = new Url(newUrlRequested);
                 newUrlCreation.save();
-
-                redirect(ctx, "/urls", "Страница успешно добавлена", "success");
+                ctx.sessionAttribute("flash", "Страница успешно добавлена");
+                ctx.sessionAttribute("flash-type", "success");
             }
+
+            ctx.redirect("/urls");
+
         } else {
             ctx.status(UNPROC_ENTITY);
-            redirect(ctx, "/", "Некорректный URL", "danger");
+            ctx.sessionAttribute("flash", "Некорректный URL");
+            ctx.sessionAttribute("flash-type", "danger");
+            ctx.redirect("/");
         }
     };
 
@@ -144,41 +147,19 @@ public final class UrlController {
                 .id.equalTo(id)
                 .findOne();
 
-        if (url != null) {
-            List<UrlCheck> urlChecks = new QUrlCheck()
-                    .url.id.equalTo(id)
-                    .orderBy()
-                        .id
-                        .desc()
-                    .findList();
-
-            ctx.attribute("url", url);
-            ctx.attribute("urlChecks", urlChecks);
-
-            render(ctx, "urls/show.html", null, null);
-        } else {
-            ctx.status(HttpServletResponse.SC_NOT_FOUND);
-            render(ctx, "index.html", "Некорректный ID (" + id + ")", "danger");
+        if (url == null) {
+            throw new NotFoundResponse();
         }
+
+        List<UrlCheck> urlChecks = new QUrlCheck()
+                .url.id.equalTo(id)
+                .orderBy()
+                .id
+                .desc()
+                .findList();
+
+        ctx.attribute("url", url);
+        ctx.attribute("urlChecks", urlChecks);
+        ctx.render("urls/show.html");
     };
-
-    private static void setAlert(Context ctx, String msg, String flash) {
-        if (msg != null) {
-            ctx.sessionAttribute("flash", msg);
-        }
-
-        if (flash != null) {
-            ctx.sessionAttribute("flash-type", flash);
-        }
-    }
-
-    private static void render(Context ctx, String target, String msg, String flash) {
-        setAlert(ctx, msg, flash);
-        ctx.render(target);
-    }
-
-    private static void redirect(Context ctx, String target, String msg, String flash) {
-        setAlert(ctx, msg, flash);
-        ctx.redirect(target);
-    }
 }

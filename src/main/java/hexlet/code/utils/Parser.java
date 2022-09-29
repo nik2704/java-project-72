@@ -15,7 +15,7 @@ public class Parser {
     public static String getUrlFormatted(String urlFormData) {
         if (urlFormData == null || urlFormData.isEmpty()) {
             LOGGER.log(Level.INFO, "Attempt to insert an empty URL");
-            return null;
+            return "";
         }
 
         StringBuilder result = new StringBuilder();
@@ -36,7 +36,7 @@ public class Parser {
             LOGGER.log(Level.INFO, "Attempt to insert an incorrect URL: " + urlFormData);
         }
 
-        return null;
+        return "";
     }
 
     public static Document getBody(String body) {

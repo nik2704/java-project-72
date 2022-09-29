@@ -26,8 +26,8 @@
                 </td>
                 <td th:if="${url.urlChecks.isEmpty}"></td>
                 <td th:if="${url.urlChecks.isEmpty}"></td>
-                <td th:unless="${url.urlChecks.isEmpty}" th:text="${#temporals.format(url.getMaxCheckDate(), 'dd/MM/yyyy HH:mm')}"></td>
-                <td th:unless="${url.urlChecks.isEmpty}" th:text="*{getMaxCode()}"></td>
+                <td th:unless="${url.urlChecks.isEmpty}" th:text="${#temporals.format(url.getUrlChecks().get(url.getUrlChecks().size() - 1).getCreatedAt(), 'dd/MM/yyyy HH:mm')}"></td>
+                <td th:unless="${url.urlChecks.isEmpty}" th:text="*{getUrlChecks().get(getUrlChecks().size() - 1).getStatusCode()}"></td>
             </tr>
             </tbody>
         </table>

@@ -133,7 +133,7 @@ public final class AppTest {
             String body = response.getBody();
 
             assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_NOT_FOUND);
-            assertThat(body).contains("Некорректный ID (123456)");
+            assertThat(body).contains("Not found");
         }
 
         @Test
