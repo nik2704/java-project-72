@@ -1,34 +1,34 @@
-setup:
-	gradle wrapper --gradle-version 7.4
+.DEFAULT_GOAL := build-run
 
 clean:
-	./gradlew clean
+	make -C app clean
 
 build:
-	./gradlew clean build
-
-start:
-	APP_ENV=development ./gradlew run
+	make -C app build
 
 install:
-	./gradlew install
+	make -C app install
 
-start-dist:
-	APP_ENV=production ./build/install/app/bin/app
+run-dist:
+	make -C run-dist
 
-generate-migrations:
-	./gradlew generateMigrations
-
-lint:
-	./gradlew checkstyleMain checkstyleTest
+start:
+	make -C app start
 
 test:
-	./gradlew test
+	make -C app test
 
 report:
-	./gradlew jacocoTestReport
+	make -C app report
 
-check-updates:
-	./gradlew dependencyUpdates
+lint:
+	make -C app lint
+
+update-deps:
+	make -C app update-deps
+
+
+build-run: build run
 
 .PHONY: build
+
