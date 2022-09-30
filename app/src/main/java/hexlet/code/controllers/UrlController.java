@@ -86,29 +86,29 @@ public final class UrlController {
         String newUrlRequested = Parser.getUrlFormatted(ctx.formParam("url"));
 
         UrlValidator urlValidator = new UrlValidator(UrlValidator.ALLOW_LOCAL_URLS + UrlValidator.ALLOW_ALL_SCHEMES);
-        if (urlValidator.isValid(newUrlRequested)) {
-            Url url = new QUrl()
-                    .name.equalTo(newUrlRequested)
-                    .findOne();
 
-            if (url != null) {
-                ctx.sessionAttribute("flash", "Страница уже существует");
-                ctx.sessionAttribute("flash-type", "info");
-            } else {
-                Url newUrlCreation = new Url(newUrlRequested);
-                newUrlCreation.save();
-                ctx.sessionAttribute("flash", "Страница успешно добавлена");
-                ctx.sessionAttribute("flash-type", "success");
-            }
-
-            ctx.redirect("/urls");
-
-        } else {
+        if (!urlValidator.isValid(newUrlRequested)) {
             ctx.status(UNPROC_ENTITY);
             ctx.sessionAttribute("flash", "Некорректный URL");
             ctx.sessionAttribute("flash-type", "danger");
             ctx.redirect("/");
+            return;
         }
+
+        Url url = new QUrl()
+                .name.equalTo(newUrlRequested)
+                .findOne();
+
+        if (url != null) {
+            ctx.sessionAttribute("flash", "Страница уже существует");
+            ctx.sessionAttribute("flash-type", "info");
+        } else {
+            Url newUrlCreation = new Url(newUrlRequested);
+            newUrlCreation.save();
+            ctx.sessionAttribute("flash", "Страница успешно добавлена");
+            ctx.sessionAttribute("flash-type", "success");
+        }
+        ctx.redirect("/urls");
     };
 
     @Getter
